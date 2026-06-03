@@ -95,15 +95,44 @@ const API_URL = "https://script.google.com/macros/s/AKfycbys0ZbXlPAWeVDm_uIZkyYO
 
 async function salvarRegistro(){
 
-    const payload = {
-        action:"createRecord",
-        segmento:document.getElementById("segmento").value,
-        serie:document.getElementById("serie").value,
-        turma:document.getElementById("turma").value,
-        categoria_suporte:document.getElementById("categoria").value,
-        nivel_suporte:document.getElementById("nivel").value,
-        status_acompanhamento:document.getElementById("status").value
-    };
+const params = new URLSearchParams({
+    action: "createRecord",
+    segmento: document.getElementById("segmento").value,
+    serie: document.getElementById("serie").value,
+    turma: document.getElementById("turma").value,
+    categoria_suporte: document.getElementById("categoria").value,
+    nivel_suporte: document.getElementById("nivel").value,
+    status_acompanhamento: document.getElementById("status").value
+});
+
+try{
+
+    const resposta = await fetch(
+        API_URL + "?" + params.toString()
+    );
+
+    const dados = await resposta.json();
+
+    if(dados.success){
+
+        document.getElementById("resultado").innerText =
+        "Registro salvo com sucesso.";
+
+    }else{
+
+        document.getElementById("resultado").innerText =
+        "Erro ao salvar.";
+
+    }
+
+}catch(erro){
+
+    console.error(erro);
+
+    document.getElementById("resultado").innerText =
+    "Erro de comunicação.";
+
+};
 
     try{
 
