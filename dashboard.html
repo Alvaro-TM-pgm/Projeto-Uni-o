@@ -74,6 +74,8 @@ tr:nth-child(even){
 
 </style>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
 </head>
 
 <body>
@@ -123,6 +125,10 @@ tr:nth-child(even){
 </tbody>
 
 </table>
+
+<br><br>
+
+<canvas id="graficoCategorias"></canvas>
 
 <script>
 
@@ -198,20 +204,43 @@ async function carregarDashboard(){
 
         tbody.innerHTML = "";
 
-        Object.entries(categorias)
-            .forEach(([categoria, quantidade]) => {
+        const labels = [];
+const valores = [];
 
-                const tr =
-                    document.createElement("tr");
+Object.entries(categorias)
+.forEach(([categoria, quantidade]) => {
 
-                tr.innerHTML = `
-                    <td>${categoria}</td>
-                    <td>${quantidade}</td>
-                `;
+    const tr =
+        document.createElement("tr");
 
-                tbody.appendChild(tr);
+    tr.innerHTML = `
+        <td>${categoria}</td>
+        <td>${quantidade}</td>
+    `;
 
-            });
+    tbody.appendChild(tr);
+
+    labels.push(categoria);
+    valores.push(quantidade);
+
+});
+
+new Chart(
+    document.getElementById("graficoCategorias"),
+    {
+        type: "bar",
+        data: {
+            labels: labels,
+            datasets: [{
+                label: "Quantidade",
+                data: valores
+            }]
+        },
+        options: {
+            responsive: true
+        }
+    }
+);
 
     }catch(erro){
 
