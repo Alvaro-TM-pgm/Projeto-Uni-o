@@ -1,25 +1,52 @@
 <!DOCTYPE html>
+
 <html lang="pt-BR">
+
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Registros</title>
 
 <style>
+
 body{
     font-family:Arial,sans-serif;
-    margin:20px;
     background:#f4f6f9;
+    padding:20px;
 }
 
 h1{
     color:#1f4e79;
 }
 
+input{
+    width:100%;
+    padding:10px;
+    margin-bottom:10px;
+    font-size:16px;
+    box-sizing:border-box;
+}
+
+button{
+    background:#1f4e79;
+    color:white;
+    border:none;
+    padding:10px 15px;
+    cursor:pointer;
+    border-radius:5px;
+}
+
+button:hover{
+    opacity:.9;
+}
+
 table{
     width:100%;
     border-collapse:collapse;
     background:white;
+    margin-top:15px;
 }
 
 th{
@@ -36,47 +63,43 @@ td{
 tr:nth-child(even){
     background:#f8f8f8;
 }
+
 </style>
 
 </head>
+
 <body>
 
 <h1>Registros Cadastrados</h1>
 
 <input
-    type="text"
-    id="pesquisa"
-    placeholder="Pesquisar..."
-    onkeyup="filtrarTabela()"
-    style="
-        width:100%;
-        padding:10px;
-        margin-bottom:15px;
-        font-size:16px;
-    "
+type="text"
+id="pesquisa"
+placeholder="Pesquisar..."
+onkeyup="filtrarTabela()"
+
 >
 
-<br><br>
-    
 <button onclick="exportarCSV()">
     Exportar CSV
 </button>
 
-<br><br>
-    
 <table id="tabela">
+
 <thead>
+
 <tr>
-<th>ID</th>
-<th>Categoria</th>
-<th>Nível</th>
-<th>Status</th>
+    <th>ID</th>
+    <th>Categoria</th>
+    <th>Nível</th>
+    <th>Status</th>
 </tr>
+
 </thead>
 
 <tbody>
-
 </tbody>
+
 </table>
 
 <script>
@@ -86,40 +109,56 @@ const API_URL =
 
 async function carregar(){
 
-    const resposta =
-        await fetch(
-            API_URL + "?action=records"
+    try{
+
+        const resposta =
+            await fetch(
+                API_URL + "?action=records"
+            );
+
+        const dados =
+            await resposta.json();
+
+        const tbody =
+            document.querySelector(
+                "#tabela tbody"
+            );
+
+        tbody.innerHTML = "";
+
+        if(!dados.success){
+            return;
+        }
+
+        dados.data.forEach(linha => {
+
+            const tr =
+                document.createElement("tr");
+
+            tr.innerHTML = `
+                <td>${linha[0] || ""}</td>
+                <td>${linha[5] || ""}</td>
+                <td>${linha[6] || ""}</td>
+                <td>${linha[11] || ""}</td>
+            `;
+
+            tbody.appendChild(tr);
+
+        });
+
+    }catch(erro){
+
+        console.error(erro);
+
+        alert(
+            "Erro ao carregar registros."
         );
 
-    const dados =
-        await resposta.json();
-
-    const tbody =
-        document.querySelector("#tabela tbody");
-
-    tbody.innerHTML = "";
-
-    if(!dados.success) return;
-
-    dados.data.forEach(linha => {
-
-        const tr =
-            document.createElement("tr");
-
-        tr.innerHTML = `
-            <td>${linha[0] || ""}</td>
-            <td>${linha[5] || ""}</td>
-            <td>${linha[6] || ""}</td>
-            <td>${linha[11] || ""}</td>
-        `;
-
-        tbody.appendChild(tr);
-
-    });
+    }
 
 }
 
-function filtrarTabela() {
+function filtrarTabela(){
 
     const filtro =
         document.getElementById("pesquisa")
@@ -140,8 +179,11 @@ function filtrarTabela() {
             texto.includes(filtro)
             ? ""
             : "none";
-        );
-        
+
+    });
+
+}
+
 function exportarCSV(){
 
     const tabela =
@@ -161,8 +203,8 @@ function exportarCSV(){
 
             row.push(
                 '"' +
-                coluna.innerText.replace(/"/g,'""')
-                + '"'
+                coluna.innerText.replace(/"/g,'""') +
+                '"'
             );
 
         });
@@ -195,11 +237,11 @@ function exportarCSV(){
     link.download =
         "relatorio.csv";
 
+    document.body.appendChild(link);
+
     link.click();
 
-}
-        
-    });
+    document.body.removeChild(link);
 
 }
 
@@ -208,4 +250,5 @@ carregar();
 </script>
 
 </body>
+
 </html>
