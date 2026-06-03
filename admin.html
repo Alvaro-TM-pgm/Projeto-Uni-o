@@ -132,47 +132,10 @@ try{
     document.getElementById("resultado").innerText =
     "Erro de comunicação.";
 
-};
-
-    try{
-
-        const resposta = await fetch(API_URL,{
-            method:"POST",
-            headers:{
-                "Content-Type":"application/json"
-            },
-            body:JSON.stringify(payload)
-        });
-
-        const texto = await resposta.text();
-
-console.log(texto);
-
-document.getElementById("resultado").innerText =
-texto;
-
-        if(dados.success){
-
-            document.getElementById("resultado").innerText =
-            "Registro salvo com sucesso.";
-
-        }else{
-
-            document.getElementById("resultado").innerText =
-            "Erro ao salvar.";
-
-        }
-
-    }catch(erro){
-
-        console.error(erro);
-
-        document.getElementById("resultado").innerText =
-        "Erro de comunicação com a API.";
-
-    }
-
 }
+
+
+
 
 </script>
 
