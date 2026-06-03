@@ -93,49 +93,59 @@ Salvar Registro
 
 const API_URL = "https://script.google.com/macros/s/AKfycbyrvgzaBVRVy4DENuZVmB0jArdHNVVPnbQ-vu40U771XT_osQovJ0hUzD_53DhBU60q/exec";
 
-async function salvarRegistro(){
+async function salvarRegistro() {
 
-const params = new URLSearchParams({
-    action: "createRecord",
-    segmento: document.getElementById("segmento").value,
-    serie: document.getElementById("serie").value,
-    turma: document.getElementById("turma").value,
-    categoria_suporte: document.getElementById("categoria").value,
-    nivel_suporte: document.getElementById("nivel").value,
-    status_acompanhamento: document.getElementById("status").value
-});
+    const resultado = document.getElementById("resultado");
 
-try{
+    try {
 
-    const resposta = await fetch(
-        API_URL + "?" + params.toString()
-    );
+        const params = new URLSearchParams({
+            action: "createRecord",
 
-    const dados = await resposta.json();
+            segmento: document.getElementById("segmento").value,
+            serie: document.getElementById("serie").value,
+            turma: document.getElementById("turma").value,
 
-    if(dados.success){
+            categoria_suporte: document.getElementById("categoria").value,
+            nivel_suporte: document.getElementById("nivel").value,
+            status_acompanhamento: document.getElementById("status").value,
 
-        document.getElementById("resultado").innerText =
-        "Registro salvo com sucesso.";
+            necessita_prova_adaptada: false,
+            necessita_adaptacao_curricular: false,
+            necessita_adaptacao_mecanica: false,
+            possui_documentacao: false
+        });
 
-    }else{
+        const resposta = await fetch(
+            API_URL + "?" + params.toString()
+        );
 
-        document.getElementById("resultado").innerText =
-        "Erro ao salvar.";
+        const dados = await resposta.json();
+
+        console.log(dados);
+
+        if (dados.success) {
+
+            resultado.innerText =
+                "Registro salvo com sucesso.";
+
+        } else {
+
+            resultado.innerText =
+                dados.message || "Erro ao salvar.";
+
+        }
+
+    } catch (erro) {
+
+        console.error(erro);
+
+        resultado.innerText =
+            "Erro de comunicação com a API.";
 
     }
 
-}catch(erro){
-
-    console.error(erro);
-
-    document.getElementById("resultado").innerText =
-    "Erro de comunicação.";
-
 }
-
-
-
 
 </script>
 
