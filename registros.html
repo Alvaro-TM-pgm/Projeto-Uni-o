@@ -43,6 +43,19 @@ tr:nth-child(even){
 
 <h1>Registros Cadastrados</h1>
 
+<input
+    type="text"
+    id="pesquisa"
+    placeholder="Pesquisar..."
+    onkeyup="filtrarTabela()"
+    style="
+        width:100%;
+        padding:10px;
+        margin-bottom:15px;
+        font-size:16px;
+    "
+>
+    
 <table id="tabela">
 <thead>
 <tr>
@@ -94,6 +107,30 @@ async function carregar(){
 
         tbody.appendChild(tr);
 
+function filtrarTabela() {
+
+    const filtro =
+        document.getElementById("pesquisa")
+        .value
+        .toLowerCase();
+
+    const linhas =
+        document.querySelectorAll(
+            "#tabela tbody tr"
+        );
+
+    linhas.forEach(linha => {
+
+        const texto =
+            linha.innerText.toLowerCase();
+
+        linha.style.display =
+            texto.includes(filtro)
+            ? ""
+            : "none";
+
+
+        
     });
 
 }
