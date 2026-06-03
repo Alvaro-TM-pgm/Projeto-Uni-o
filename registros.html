@@ -55,6 +55,12 @@ tr:nth-child(even){
         font-size:16px;
     "
 >
+
+<button onclick="exportarCSV()">
+    Exportar CSV
+</button>
+
+<br><br>
     
 <table id="tabela">
 <thead>
@@ -132,7 +138,64 @@ function filtrarTabela() {
             texto.includes(filtro)
             ? ""
             : "none";
+        
+function exportarCSV(){
 
+    const tabela =
+        document.getElementById("tabela");
+
+    let csv = [];
+
+    const linhas =
+        tabela.querySelectorAll("tr");
+
+    linhas.forEach(linha => {
+
+        let row = [];
+
+        linha.querySelectorAll("th,td")
+        .forEach(coluna => {
+
+            row.push(
+                '"' +
+                coluna.innerText.replace(/"/g,'""')
+                + '"'
+            );
+
+        });
+
+        csv.push(
+            row.join(",")
+        );
+
+    });
+
+    const conteudo =
+        csv.join("\n");
+
+    const blob =
+        new Blob(
+            [conteudo],
+            {
+                type:"text/csv;charset=utf-8;"
+            }
+        );
+
+    const url =
+        URL.createObjectURL(blob);
+
+    const link =
+        document.createElement("a");
+
+    link.href = url;
+
+    link.download =
+        "relatorio.csv";
+
+    link.click();
+
+}
+        
     });
 
 }
