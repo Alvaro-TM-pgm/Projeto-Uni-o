@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-
 <html lang="pt-BR">
-
 <head>
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Dashboard Escolar</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 
@@ -20,6 +20,10 @@ body{
 
 h1{
     text-align:center;
+    color:#1f4e79;
+}
+
+h2{
     color:#1f4e79;
 }
 
@@ -38,22 +42,17 @@ h1{
     box-shadow:0 2px 10px rgba(0,0,0,.1);
 }
 
-.card h2{
-    margin:0;
-    color:#1f4e79;
-    font-size:18px;
-}
-
 .numero{
-    margin-top:15px;
     font-size:40px;
     font-weight:bold;
+    margin-top:10px;
 }
 
 table{
     width:100%;
     border-collapse:collapse;
     background:white;
+    margin-top:20px;
     box-shadow:0 2px 10px rgba(0,0,0,.1);
 }
 
@@ -69,13 +68,19 @@ td{
 }
 
 tr:nth-child(even){
-    background:#f9f9f9;
+    background:#f8f8f8;
+}
+
+.grafico{
+    background:white;
+    margin-top:30px;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 2px 10px rgba(0,0,0,.1);
 }
 
 </style>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
 </head>
 
 <body>
@@ -84,27 +89,25 @@ tr:nth-child(even){
 
 <div class="cards">
 
-```
-<div class="card">
-    <h2>Total de Registros</h2>
-    <div id="total" class="numero">0</div>
-</div>
+    <div class="card">
+        <h2>Total de Registros</h2>
+        <div id="total" class="numero">0</div>
+    </div>
 
-<div class="card">
-    <h2>Ativos</h2>
-    <div id="ativos" class="numero">0</div>
-</div>
+    <div class="card">
+        <h2>Ativos</h2>
+        <div id="ativos" class="numero">0</div>
+    </div>
 
-<div class="card">
-    <h2>Em Análise</h2>
-    <div id="analise" class="numero">0</div>
-</div>
+    <div class="card">
+        <h2>Em Análise</h2>
+        <div id="analise" class="numero">0</div>
+    </div>
 
-<div class="card">
-    <h2>Encerrados</h2>
-    <div id="encerrados" class="numero">0</div>
-</div>
-```
+    <div class="card">
+        <h2>Encerrados</h2>
+        <div id="encerrados" class="numero">0</div>
+    </div>
 
 </div>
 
@@ -113,12 +116,10 @@ tr:nth-child(even){
 <table id="categorias">
 
 <thead>
-
 <tr>
 <th>Categoria</th>
 <th>Quantidade</th>
 </tr>
-
 </thead>
 
 <tbody>
@@ -126,9 +127,13 @@ tr:nth-child(even){
 
 </table>
 
-<br><br>
+<div class="grafico">
 
-<canvas id="graficoCategorias"></canvas>
+    <h2>Gráfico por Categoria</h2>
+
+    <canvas id="graficoCategorias"></canvas>
+
+</div>
 
 <script>
 
@@ -154,8 +159,8 @@ async function carregarDashboard(){
         const registros =
             dados.data || [];
 
-        document.getElementById("total")
-            .innerText = registros.length;
+        document.getElementById("total").innerText =
+            registros.length;
 
         let ativos = 0;
         let analise = 0;
@@ -188,14 +193,14 @@ async function carregarDashboard(){
 
         });
 
-        document.getElementById("ativos")
-            .innerText = ativos;
+        document.getElementById("ativos").innerText =
+            ativos;
 
-        document.getElementById("analise")
-            .innerText = analise;
+        document.getElementById("analise").innerText =
+            analise;
 
-        document.getElementById("encerrados")
-            .innerText = encerrados;
+        document.getElementById("encerrados").innerText =
+            encerrados;
 
         const tbody =
             document.querySelector(
@@ -205,42 +210,50 @@ async function carregarDashboard(){
         tbody.innerHTML = "";
 
         const labels = [];
-const valores = [];
+        const valores = [];
 
-Object.entries(categorias)
-.forEach(([categoria, quantidade]) => {
+        Object.entries(categorias)
+        .forEach(([categoria, quantidade]) => {
 
-    const tr =
-        document.createElement("tr");
+            const tr =
+                document.createElement("tr");
 
-    tr.innerHTML = `
-        <td>${categoria}</td>
-        <td>${quantidade}</td>
-    `;
+            tr.innerHTML = `
+                <td>${categoria}</td>
+                <td>${quantidade}</td>
+            `;
 
-    tbody.appendChild(tr);
+            tbody.appendChild(tr);
 
-    labels.push(categoria);
-    valores.push(quantidade);
+            labels.push(categoria);
+            valores.push(quantidade);
 
-});
+        });
 
-new Chart(
-    document.getElementById("graficoCategorias"),
-    {
-        type: "bar",
-        data: {
-            labels: labels,
-            datasets: [{
-                label: "Quantidade",
-                data: valores
-            }]
-        },
-        options: {
-            responsive: true
-        }
-    }
-);
+        new Chart(
+            document.getElementById(
+                "graficoCategorias"
+            ),
+            {
+                type: "bar",
+
+                data: {
+
+                    labels: labels,
+
+                    datasets: [{
+                        label: "Quantidade",
+                        data: valores
+                    }]
+
+                },
+
+                options: {
+                    responsive: true
+                }
+
+            }
+        );
 
     }catch(erro){
 
@@ -259,5 +272,4 @@ carregarDashboard();
 </script>
 
 </body>
-
 </html>
