@@ -25,21 +25,25 @@ input{
     width:100%;
     padding:10px;
     margin-bottom:10px;
-    font-size:16px;
     box-sizing:border-box;
+    font-size:16px;
 }
 
 button{
     background:#1f4e79;
     color:white;
     border:none;
-    padding:10px 15px;
-    cursor:pointer;
+    padding:8px 12px;
     border-radius:5px;
+    cursor:pointer;
 }
 
 button:hover{
     opacity:.9;
+}
+
+.btn-excluir{
+    background:#c62828;
 }
 
 table{
@@ -62,6 +66,11 @@ td{
 
 tr:nth-child(even){
     background:#f8f8f8;
+}
+
+.acoes{
+    display:flex;
+    gap:5px;
 }
 
 </style>
@@ -93,6 +102,7 @@ onkeyup="filtrarTabela()"
     <th>Categoria</th>
     <th>Nível</th>
     <th>Status</th>
+    <th>Ações</th>
 </tr>
 
 </thead>
@@ -132,14 +142,24 @@ async function carregar(){
 
         dados.data.forEach(linha => {
 
+            const id =
+                linha[0] || "";
+
             const tr =
                 document.createElement("tr");
 
             tr.innerHTML = `
-                <td>${linha[0] || ""}</td>
+                <td>${id}</td>
                 <td>${linha[5] || ""}</td>
                 <td>${linha[6] || ""}</td>
                 <td>${linha[11] || ""}</td>
+                <td>
+                    <button
+                        class="btn-excluir"
+                        onclick="excluirRegistro('${id}')">
+                        Excluir
+                    </button>
+                </td>
             `;
 
             tbody.appendChild(tr);
@@ -233,15 +253,65 @@ function exportarCSV(){
         document.createElement("a");
 
     link.href = url;
-
-    link.download =
-        "relatorio.csv";
+    link.download = "relatorio.csv";
 
     document.body.appendChild(link);
 
     link.click();
 
     document.body.removeChild(link);
+
+}
+
+async function excluirRegistro(id){
+
+    const confirmar =
+        confirm(
+            "Deseja realmente excluir este registro?"
+        );
+
+    if(!confirmar){
+        return;
+    }
+
+    try{
+
+        const resposta =
+            await fetch(
+                API_URL +
+                "?action=deleteRecord&id=" +
+                encodeURIComponent(id)
+            );
+
+        const dados =
+            await resposta.json();
+
+        if(dados.success){
+
+            alert(
+                "Registro excluído com sucesso."
+            );
+
+            carregar();
+
+        }else{
+
+            alert(
+                dados.message ||
+                "Erro ao excluir."
+            );
+
+        }
+
+    }catch(erro){
+
+        console.error(erro);
+
+        alert(
+            "Erro ao excluir."
+        );
+
+    }
 
 }
 
